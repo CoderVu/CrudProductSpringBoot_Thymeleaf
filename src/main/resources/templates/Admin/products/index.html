@@ -9,7 +9,8 @@
 <body>
 <div class="container mt-5">
     <h1 class="text-center mb-4">Product Management</h1>
-    <a class="btn btn-primary mb-3" href="/products/create">Create Product</a>
+    <a class="btn btn-primary mb-3" th:href="@{/Admin/products/create}">Create Product</a>
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -35,9 +36,9 @@
             </td>
             <td th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
             <td>
-                <a class="btn btn-info btn-sm" th:href="@{/products/edit/{id}(id=${product.id})}">Edit</a>
+                <a class="btn btn-info btn-sm" th:href="@{/Admin/products/edit/{id}(id=${product.id})}">Edit</a>
 
-                <a class="btn btn-danger btn-sm" th:href="@{/products/delete/{id}(id=${product.id})}"
+                <a class="btn btn-danger btn-sm" th:href="@{/Admin/products/delete/{id}(id=${product.id})}"
                    onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')">Delete</a>
             </td>
         </tr>

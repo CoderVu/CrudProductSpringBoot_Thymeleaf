@@ -24,30 +24,34 @@ import java.util.Optional;
 
 
 @Controller
-@RequestMapping("/products")
+@RequestMapping("/Admin")
 public class ProductController {
 
     @Autowired
     private ProductsRepository productsRepository;
     @GetMapping({"", "/"})
+    public String showHomePage() {
+        return "Admin/home"; // Trả về tên của tệp HTML của trang home
+    }
+    @GetMapping({"/products/index"})
     public String showProductList(Model model) {
         List<Product> products = productsRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         model.addAttribute("products", products);
-        return "products/index";
+        return "Admin/products/index";
     }
 
-    @GetMapping("/create")
+    @GetMapping("/products/create")
     public String showCreatePage(Model model) {
         ProductDAO productDTO = new ProductDAO();
         model.addAttribute("productDTO", productDTO);
-        return "products/CreateProduct";
+        return "Admin/products/CreateProduct";
     }
 
-    @PostMapping("/create")
+    @PostMapping("/products/create")
     public String createProduct(@ModelAttribute ProductDAO productDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             // Xử lý lỗi nếu có
-            return "products/CreateProduct";
+            return "redirect:/Admin/products/index";
         }
 
         // Nhận hình ảnh từ ProductDTO
@@ -87,9 +91,9 @@ public class ProductController {
         productsRepository.save(product);
 
         // Redirect về trang danh sách sản phẩm sau khi tạo thành công
-        return "redirect:/products";
+        return "redirect:/Admin/products/index";
     }
-    @GetMapping("/edit/{id}")
+    @GetMapping("/products/edit/{id}")
     public String showEditPage(@PathVariable("id") Long id, Model model) {
         Assert.notNull(id, "ID must not be null");
         Optional<Product> optionalProduct = productsRepository.findById(id);
@@ -117,13 +121,13 @@ public class ProductController {
             // Truyền chuỗi base64Image vào model để sử dụng trong template Thymeleaf
             model.addAttribute("base64Image", base64Image);
             model.addAttribute("productDTO", productDTO);
-            return "products/EditProduct";
+            return "Admin/products/EditProduct";
         } else {
             return "errorPage";
         }
     }
 
-    @PostMapping("/update/{id}")
+    @PostMapping("/products/update/{id}")
     public String updateProduct(@PathVariable Long id, @ModelAttribute @Validated ProductDAO productDTO, BindingResult bindingResult, Model model) {
         Assert.notNull(id, "ID must not be null");
         Optional<Product> optionalProduct = productsRepository.findById(id);
@@ -133,13 +137,13 @@ public class ProductController {
         if (!productDTO.isValid()) {
             // Xử lý lỗi nếu dữ liệu không hợp lệ
             model.addAttribute("productDTO", productDTO);
-            return "products/EditProduct";
+            return "Admin/products/EditProduct";
         }
 
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("productDTO", productDTO);
-            return "products/EditProduct";
+            return "Admin/products/EditProduct";
         }
 
         Product product = optionalProduct.get();
@@ -168,16 +172,16 @@ public class ProductController {
 
         productsRepository.save(product);
 
-        return "redirect:/products";
+        return "redirect:/Admin/products/index";
     }
 
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/products/delete/{id}")
     public String deleteProduct(@PathVariable Long id) {
         // Xóa sản phẩm từ cơ sở dữ liệu
         productsRepository.deleteById(id);
         // Redirect về trang danh sách sản phẩm sau khi xóa thành công
-        return "redirect:/products";
+        return "redirect:/Admin/products/index";
     }
 
 }
